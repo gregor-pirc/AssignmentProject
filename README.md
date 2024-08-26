@@ -11,9 +11,9 @@ In order to run the project you will need:
 
 ## Endpoints ##
 The application currently has the following endpoints:
-- Create (POST /api/product, Request Body contains the new object data)
+- Create (POST /api/products, Request Body contains the new object data)
 - Get all (GET /api/products)
 - Get by ID (GET /api/products/{id})
 - Get by Name (GET /api/products/name/{name})
-- Delete (DELTE /api/products/{id})
+- Delete (DELETE /api/products/{id})
 - Replace (PUT /api/products, Request Body contains the new object data)
