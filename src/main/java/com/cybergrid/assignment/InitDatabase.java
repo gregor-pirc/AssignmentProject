@@ -12,9 +12,6 @@ public class InitDatabase {
     private static final Logger log = LoggerFactory.getLogger(InitDatabase.class);
 
     CommandLineRunner initDatabase(ProductRepository repository) {
-        return args -> {
-            log.info("Preloading " + repository.save(new Product("Casio A1000")));
-            log.info("Preloading " + repository.save(new Product("Casio A168")));
-        };
+        return args -> log.info("Preloading " + repository.save(Product.builder().name("Casio A1000").price(5999).currency("EUR").build()));
     }
 }

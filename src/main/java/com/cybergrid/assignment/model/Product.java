@@ -1,6 +1,8 @@
 package com.cybergrid.assignment.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,8 @@ import lombok.Setter;
 @Table(name = "products")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class Product {
 
     @Id
@@ -22,15 +26,6 @@ public class Product {
     private String currency;
 
     private Product() {
-    }
-
-    /**
-     * For testing and creating mock data
-     *
-     * @param name name of product
-     */
-    public Product(String name) {
-        this.name = name;
     }
 
 }

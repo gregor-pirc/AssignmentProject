@@ -1,5 +1,8 @@
 package com.cybergrid.assignment.controller;
 
+import com.cybergrid.assignment.dto.ProductCreationDto;
+import com.cybergrid.assignment.dto.ProductDto;
+import com.cybergrid.assignment.mapper.ProductMapper;
 import com.cybergrid.assignment.model.Product;
 import com.cybergrid.assignment.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -9,16 +12,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @SuppressWarnings("unused")
 @RequestMapping("/api")
-class ProductController {
+public class ProductController {
 
     private final ProductRepository repository;
+    private final ProductMapper mapper;
 
-    ProductController(ProductRepository repository) {
+    public ProductController(ProductRepository repository) {
         this.repository = repository;
+        this.mapper = new ProductMapper();
     }
 
     /**
@@ -27,8 +33,8 @@ class ProductController {
      * @return List of all existing products
      */
     @GetMapping("/products")
-    ResponseEntity<List<Product>> all() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<ProductDto>> getAll() {
+        return ResponseEntity.ok(repository.findAll().stream().map(mapper::toDto).collect(Collectors.toList()));
     }
 
     /**
@@ -38,9 +44,12 @@ class ProductController {
      * @return The newly created product
      */
     @PostMapping("/products")
-    ResponseEntity<Product> createProduct(@RequestBody Product newProduct) {
-        Optional<Product> createdProduct = repository.saveReturnOptional(newProduct);
-        return createdProduct.map(ResponseEntity::ok)
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductCreationDto newProduct) {
+        Optional<Product> createdProduct = repository.saveReturnOptional(mapper.toProduct(newProduct));
+        ProductDto productDto = mapper.toDto(createdProduct.get());
+        return createdProduct
+                .map(mapper::toDto)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.unprocessableEntity().build());
     }
 
@@ -52,8 +61,10 @@ class ProductController {
      * @throws EntityNotFoundException if the product could not be found
      */
     @GetMapping("/products/{id}")
-    ResponseEntity<Product> findById(@PathVariable Integer id) {
-        return repository.findById(id).map(ResponseEntity::ok)
+    public ResponseEntity<ProductDto> findById(@PathVariable Integer id) {
+        return repository.findById(id)
+                .map(mapper::toDto)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -64,9 +75,9 @@ class ProductController {
      * @return The found product
      * @throws EntityNotFoundException if the product could not be found
      */
-    @GetMapping("/products/{id}")
-    ResponseEntity<List<Product>> findByName(@PathVariable String name) {
-        return ResponseEntity.ok(repository.findByName(name));
+    @GetMapping("/products/name/{name}")
+    public ResponseEntity<List<ProductDto>> findByName(@PathVariable String name) {
+        return ResponseEntity.ok(repository.findByName(name).stream().map(mapper::toDto).collect(Collectors.toList()));
     }
 
     /**
@@ -77,7 +88,7 @@ class ProductController {
      * @return Returns newly created product if product was replaced successfully. Else returns null with code 404
      */
     @PutMapping("/products/{id}")
-    ResponseEntity<Product> replaceProduct(@RequestBody Product newProduct, @PathVariable Integer id) {
+    public ResponseEntity<Product> replaceProduct(@RequestBody ProductCreationDto newProduct, @PathVariable Integer id) {
         Optional<Product> optionalProduct = repository.findById(id);
         if (optionalProduct.isPresent()) {
             Product foundProduct = optionalProduct.get();
@@ -97,7 +108,7 @@ class ProductController {
      * @param id ID of the product to be deleted
      */
     @DeleteMapping("/products/{id}")
-    ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return ResponseEntity.ok().build();
@@ -105,4 +116,10 @@ class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleResourceNotFoundException(Exception e) {
+        return new ResponseEntity<>("An error occurred while handling your request: " + e.getMessage(), HttpStatusCode.valueOf(404));
+    }
+
 }
