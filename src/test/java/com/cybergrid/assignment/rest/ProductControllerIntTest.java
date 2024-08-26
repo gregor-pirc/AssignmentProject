@@ -21,6 +21,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.nio.charset.Charset;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,4 +59,17 @@ public class ProductControllerIntTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void getReturnsProduct() throws Exception {
+        Mockito.when(productController.findById(anyInt())).thenReturn(ResponseEntity.ok(productDto));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/api/products/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(Charset.defaultCharset())
+                .param("id", "1");
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
 }
