@@ -32,7 +32,6 @@ public class ProductMapper {
 
     public Product toProduct(ProductCreationDto productCreationDto) {
         return Product.builder()
-                .id(1)
                 .name(productCreationDto.getName())
                 .description(productCreationDto.getDescription())
                 .price(productCreationDto.getPrice())

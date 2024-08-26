@@ -45,12 +45,10 @@ public class ProductController {
      */
     @PostMapping("/products")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductCreationDto newProduct) {
-        Optional<Product> createdProduct = repository.saveReturnOptional(mapper.toProduct(newProduct));
-        ProductDto productDto = mapper.toDto(createdProduct.get());
-        return createdProduct
+        return Optional.of(repository.save(mapper.toProduct(newProduct)))
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.unprocessableEntity().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
