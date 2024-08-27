@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO that is used for POST requests, when the ID value is not needed
+ */
 @Builder
 @Getter
 @Setter

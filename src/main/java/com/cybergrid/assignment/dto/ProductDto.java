@@ -4,6 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO that is returned by GET requests and should be used by the client.
+ * Includes formatted price (@see @link com.cybergrid.assignment.mapper.ProductMapper.class)
+ */
 @Getter
 @Setter
 @Builder

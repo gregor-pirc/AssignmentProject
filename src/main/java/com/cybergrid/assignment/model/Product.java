@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Definition of product entity for JPA library
+ * Definition of product entity for JPA library, will be automatically linked with the database table "products"
  */
 @Entity
 @Table(name = "products")

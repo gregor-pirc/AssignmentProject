@@ -3,10 +3,8 @@ package com.cybergrid.assignment.mapper;
 import com.cybergrid.assignment.dto.ProductCreationDto;
 import com.cybergrid.assignment.dto.ProductDto;
 import com.cybergrid.assignment.model.Product;
-import org.springframework.stereotype.Component;
 
 
-@Component
 public class ProductMapper {
 
     public ProductDto toDto(Product product) {

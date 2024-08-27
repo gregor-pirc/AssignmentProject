@@ -6,6 +6,8 @@ import com.cybergrid.assignment.mapper.ProductMapper;
 import com.cybergrid.assignment.model.Product;
 import com.cybergrid.assignment.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 @RequestMapping("/api")
 public class ProductController {
+
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductRepository repository;
     private final ProductMapper mapper;
@@ -40,7 +44,7 @@ public class ProductController {
     /**
      * Creates a new product
      *
-     * @param newProduct - product you wish to create
+     * @param newProduct - product you wish to create, request body should fit {@link ProductCreationDto} schema
      * @return The newly created product
      */
     @PostMapping("/products")
@@ -55,7 +59,7 @@ public class ProductController {
      * Find a product using an ID
      *
      * @param id function will try to find a product with a matching ID
-     * @return The found product
+     * @return The found product, in the form of {@link ProductDto}
      * @throws EntityNotFoundException if the product could not be found
      */
     @GetMapping("/products/{id}")
@@ -67,11 +71,10 @@ public class ProductController {
     }
 
     /**
-     * Find a product using an ID
+     * Find all products that have a name matching the given String
      *
      * @param name function will try to find all products with a matching name
-     * @return The found product
-     * @throws EntityNotFoundException if the product could not be found
+     * @return List<ProductDto> of the found products, empty of no product could be found or if error thrown
      */
     @GetMapping("/products/name/{name}")
     public ResponseEntity<List<ProductDto>> findByName(@PathVariable String name) {
@@ -115,8 +118,13 @@ public class ProductController {
         }
     }
 
+    /**
+     * @param e exception that was intercepted
+     * @return ResponseEntity containing the error message
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleResourceNotFoundException(Exception e) {
+        log.error("An exception was thrown:", e);
         return new ResponseEntity<>("An error occurred while handling your request: " + e.getMessage(), HttpStatusCode.valueOf(404));
     }
 
