@@ -19,7 +19,9 @@ In order to run the project you will need:
 ### Database setup ###
 
 Start by creating a new database server using pgAdmin. Make sure to remember the username and password for this database.
-Included in the repository is an .sql file that contains the SQL statement for the creation of the Products table. You can execute this using pgAdmin to create a permanent database on your PC. 
+By default, the project will create it's own **temporaray** database for testing. If you wish to create a permanent database then the please see the "Configuring the project" section.
+
+Included in the repository is a .sql file that contains the SQL statement for the creation of the Products table. You can execute this using pgAdmin to create a permanent database on your PC. 
 
 When all of this is prepared you can begin setting up the project by downloading the code from this repository.
 Once you have downloaded it and extracted it to any folder, you can now open it in the editor of your choice. 
@@ -35,6 +37,12 @@ Open the application.properties file and edit the following lines with your info
 
 -spring.datasource.password= {DB password}
 ```
+
+If you want to use an already existing database then change the following section 
+```
+spring.jpa.hibernate.ddl-auto=**update**
+```
+
 
 ### Running it ###
 
